@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thiệp mời</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+    }
+    .input-box {
+      margin: 20px;
+    }
+    .card {
+      position: relative;
+      display: inline-block;
+    }
+    .card img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .name {
+      position: absolute;
+      top: 32%;   /* chỉnh đúng vị trí chữ "Weanie xinh iu" */
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
+      font-style: italic;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background: #e63946;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #d62828;
+    }
+  </style>
+</head>
+<body>
+  <h2>Nhập tên để tạo thiệp</h2>
+  <div class="input-box">
+    <input type="text" id="inputName" placeholder="Nhập tên của bạn...">
+    <button onclick="taoThiep()">Tạo thiệp</button>
+  </div>
+
+  <div class="card" id="card" style="display:none;">
+    <img src="thiep.jpg" alt="Thiệp mời">
+    <div class="name" id="tenNguoiNhan"></div>
+  </div>
+
+  <button id="downloadBtn" style="display:none;" onclick="taiThiep()">Tải thiệp về</button>
+
+  <!-- thư viện html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <script>
+    function taoThiep() {
+      const ten = document.getElementById("inputName").value.trim();
+      if (ten === "") {
+        alert("Bạn chưa nhập tên!");
+        return;
+      }
+      document.getElementById("tenNguoiNhan").textContent = ten;
+      document.getElementById("card").style.display = "inline-block";
+      document.getElementById("downloadBtn").style.display = "inline-block";
+    }
+
+    function taiThiep() {
+      const card = document.getElementById("card");
+      html2canvas(card, {useCORS: true}).then(canvas => {
+        let link = document.createElement("a");
+        link.download = "thiep-moi.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }).catch(err => {
+        alert("Không tải được. Thử mở file bằng Chrome/Edge rồi thử lại!");
+        console.error(err);
+      });
+    }
+  </script>
+</body>
+</html>
