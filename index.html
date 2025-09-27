@@ -2,92 +2,94 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Thiệp mời</title>
+  <title>Thư mời sự kiện</title>
   <style>
     body {
-      text-align: center;
       font-family: Arial, sans-serif;
-      background: #f0f0f0;
-    }
-    .input-box {
-      margin: 20px;
+      text-align: center;
+      background: #f9f9f9;
+      padding: 20px;
     }
     .card {
-      position: relative;
-      display: inline-block;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: auto;
     }
-    .card img {
+    img {
       max-width: 100%;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      border-radius: 10px;
     }
-    .name {
-      position: absolute;
-      top: 32%;   /* chỉnh đúng vị trí chữ "Weanie xinh iu" */
-      left: 50%;
-      transform: translateX(-50%);
+    h2 {
+      color: #333;
+    }
+    #downloadBtn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #4CAF50;
       color: white;
-      font-size: 28px;
-      font-weight: bold;
-      font-style: italic;
-      text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
-    }
-    button {
-      margin-top: 10px;
-      padding: 8px 16px;
-      font-size: 16px;
       border: none;
-      border-radius: 6px;
-      background: #e63946;
-      color: white;
+      border-radius: 8px;
       cursor: pointer;
-    }
-    button:hover {
-      background: #d62828;
     }
   </style>
 </head>
 <body>
-  <h2>Nhập tên để tạo thiệp</h2>
-  <div class="input-box">
-    <input type="text" id="inputName" placeholder="Nhập tên của bạn...">
-    <button onclick="taoThiep()">Tạo thiệp</button>
+  <h2>Nhập tên để nhận thư mời</h2>
+  <input type="text" id="nameInput" placeholder="Nhập tên của bạn">
+  <button onclick="generateCard()">Xác nhận</button>
+
+  <div id="invitation" class="card" style="display:none; margin-top:20px;">
+    <h2 id="guestName"></h2>
+    <p>Chúng tôi trân trọng mời bạn tham dự sự kiện đặc biệt.</p>
+    <img src="thiep.jpg" alt="Thư mời">
+    <p>Ngày: 15/10/2025<br>Địa điểm: TP.HCM</p>
+    <button id="downloadBtn" onclick="downloadCard()">📥 Tải về thư mời</button>
   </div>
 
-  <div class="card" id="card" style="display:none;">
-    <img src="thiep.jpg" alt="Thiệp mời">
-    <div class="name" id="tenNguoiNhan"></div>
-  </div>
-
-  <button id="downloadBtn" style="display:none;" onclick="taiThiep()">Tải thiệp về</button>
-
-  <!-- thư viện html2canvas -->
+  <!-- Thư viện html2canvas để xuất ảnh -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
-    function taoThiep() {
-      const ten = document.getElementById("inputName").value.trim();
-      if (ten === "") {
-        alert("Bạn chưa nhập tên!");
+    function generateCard() {
+      let savedName = localStorage.getItem("guestName");
+      if (savedName) {
+        alert("Bạn đã nhập tên trước đó: " + savedName);
+        document.getElementById("guestName").innerText = "Kính gửi " + savedName + ",";
+        document.getElementById("invitation").style.display = "block";
         return;
       }
-      document.getElementById("tenNguoiNhan").textContent = ten;
-      document.getElementById("card").style.display = "inline-block";
-      document.getElementById("downloadBtn").style.display = "inline-block";
+
+      let name = document.getElementById("nameInput").value.trim();
+      if (!name) {
+        alert("Vui lòng nhập tên!");
+        return;
+      }
+
+      localStorage.setItem("guestName", name);
+      document.getElementById("guestName").innerText = "Kính gửi " + name + ",";
+      document.getElementById("invitation").style.display = "block";
     }
 
-    function taiThiep() {
-      const card = document.getElementById("card");
-      html2canvas(card, {useCORS: true}).then(canvas => {
-        let link = document.createElement("a");
-        link.download = "thiep-moi.png";
+    function downloadCard() {
+      const card = document.getElementById("invitation");
+      html2canvas(card).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "thu-moi.png";
         link.href = canvas.toDataURL("image/png");
         link.click();
-      }).catch(err => {
-        alert("Không tải được. Thử mở file bằng Chrome/Edge rồi thử lại!");
-        console.error(err);
       });
+    }
+
+    // Tự động hiển thị lại nếu đã nhập trước đó
+    window.onload = () => {
+      let savedName = localStorage.getItem("guestName");
+      if (savedName) {
+        document.getElementById("guestName").innerText = "Kính gửi " + savedName + ",";
+        document.getElementById("invitation").style.display = "block";
+      }
     }
   </script>
 </body>
